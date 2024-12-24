@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enhanced Day-Night Toggle with Extra Features</title>
+  <style>
+    /* Base styles for the page */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #87CEEB, #B0E2FF); /* Default day background */
+      overflow: hidden;
+      transition: background 4s ease, transform 4s ease;
+    }
+
+    /* Cloud styles */
+    .clouds {
+      position: absolute;
+      top: 20%;
+      left: -30%;
+      width: 40%;
+      height: 20%;
+      background: rgba(255, 255, 255, 0.9);
+      animation: moveClouds 60s linear infinite;
+      border-radius: 50%;
+      opacity: 0.8;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+    }
+
+    .clouds.two {
+      top: 35%;
+      animation-duration: 80s;
+    }
+
+    /* Sun and Moon styles */
+    .sun, .moon {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+      transition: all 3s ease;
+    }
+
+    .sun {
+      background: radial-gradient(circle, #FFD700, #FFA500);
+      top: 20%;
+      left: 20%;
+    }
+
+    .moon {
+      background: radial-gradient(circle, #B0C4DE, #778899);
+      top: -150px;
+      left: 20%;
+      opacity: 0;
+      box-shadow: 0 0 50px rgba(255, 255, 255, 0.7);
+    }
+
+    /* Twinkling stars */
+    .star {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: white;
+      border-radius: 50%;
+      animation: twinkle 1.5s infinite ease-in-out;
+      opacity: 0.7;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    /* Rain and snowflakes */
+    .raindrop, .snowflake {
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: fall 2s linear infinite;
+    }
+
+    @keyframes fall {
+      0% {
+        top: -10px;
+        opacity: 0.8;
+      }
+      100% {
+        top: 100vh;
+        opacity: 0;
+      }
+    }
+
+    /* Toggle container styles */
+    .toggle-container {
+      position: relative;
+      width: 80px;
+      height: 40px;
+      background: linear-gradient(to right, #FFD700, #FFA500);
+      border-radius: 25px;
+      cursor: pointer;
+      overflow: hidden;
+      z-index: 10;
+      transition: background 4s ease, transform 1s ease;
+    }
+
+    .toggle-container:before {
+      content: '';
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      width: 30px;
+      height: 30px;
+      background: radial-gradient(circle, #FFFACD, #FFD700);
+      border-radius: 50%;
+      transition: all 2s ease;
+    }
+
+    /* Active (night mode) styles */
+    .toggle-container.active {
+      background: linear-gradient(to right, #1C1C1C, #2F4F4F);
+    }
+
+    .toggle-container.active:before {
+      left: 40px;
+      background: radial-gradient(circle, #C0C0C0, #A9A9A9);
+    }
+
+    body.night {
+      background: linear-gradient(135deg, #0F2027, #203A43, #2C5364);
+    }
+
+    /* Active styles for moon */
+    body.night .moon {
+      top: 50%;
+      opacity: 1;
+    }
+
+    /* Transitioning sun to night */
+    body.night .sun {
+      top: -150px;
+      opacity: 0;
+    }
+
+    body.night {
+      animation: smoothNightTransition 4s ease-out forwards;
+    }
+
+    @keyframes smoothNightTransition {
+      0% { background: linear-gradient(135deg, #87CEEB, #B0E2FF); }
+      100% { background: linear-gradient(135deg, #0F2027, #203A43, #2C5364); }
+    }
+
+    /* Fireflies effect */
+    .firefly {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: rgba(255, 255, 0, 0.8);
+      border-radius: 50%;
+      animation: fireflyAnimation 3s ease-in-out infinite;
+      opacity: 0;
+    }
+
+    @keyframes fireflyAnimation {
+      0% { opacity: 0; transform: translateY(0); }
+      50% { opacity: 1; transform: translateY(-10px); }
+      100% { opacity: 0; transform: translateY(0); }
+    }
+
+    /* Mobile responsive styles */
+    @media (max-width: 768px) {
+      .toggle-container {
+        width: 60px;
+        height: 30px;
+      }
+    }
+
+    /* Cloud movement animation */
+    @keyframes moveClouds {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+  </style>
+</head>
+<body>
+  <div class="clouds"></div> <!-- Clouds for day effect -->
+  <div class="clouds two"></div> <!-- Additional cloud layer -->
+  <div class="sun"></div> <!-- Sun for day mode -->
+  <div class="moon"></div> <!-- Moon for night mode -->
+  <div class="toggle-container" onclick="toggleDayNight(this)">
+  </div>
+
+  <script>
+    // Function to generate stars
+    function generateStars() {
+      const starContainer = document.body;
+      for (let i = 0; i < 50; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+        star.style.left = `${Math.random() * 100}vw`;
+        star.style.top = `${Math.random() * 100}vh`;
+        starContainer.appendChild(star);
+      }
+    }
+
+    // Function to generate fireflies at night
+    function generateFireflies() {
+      const fireflyContainer = document.body;
+      for (let i = 0; i < 20; i++) {
+        const firefly = document.createElement('div');
+        firefly.classList.add('firefly');
+        firefly.style.left = `${Math.random() * 100}vw`;
+        firefly.style.top = `${Math.random() * 100}vh`;
+        fireflyContainer.appendChild(firefly);
+      }
+    }
+
+    // Function to generate rain or snow
+    function generateWeather() {
+      const weatherType = Math.random() > 0.5 ? 'raindrop' : 'snowflake';
+      const numberOfDrops = 50 + Math.random() * 50;
+
+      for (let i = 0; i < numberOfDrops; i++) {
+        const drop = document.createElement('div');
+        drop.classList.add(weatherType);
+        drop.style.left = `${Math.random() * 100}vw`;
+        drop.style.top = `${Math.random() * 100}vh`;
+        document.body.appendChild(drop);
+      }
+    }
+
+    // Toggle day/night mode
+    function toggleDayNight(element) {
+      const body = document.body;
+      body.classList.toggle('night');  // Toggle between night and day
+      element.classList.toggle('active');  // Toggle the button's active state
+
+      if (body.classList.contains('night')) {
+        generateStars();  // Add stars at night
+        generateFireflies();  // Add fireflies at night
+        generateWeather();  // Generate rain or snow during the night
+      }
+    }
+
+    // Generate some initial stars and fireflies
+    generateStars();
+  </script>
+</body>
+</html>
